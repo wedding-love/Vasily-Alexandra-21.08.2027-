@@ -565,6 +565,21 @@
     .venue__btn:active { transform: scale(0.98); }
     .venue__btn span { position: relative; z-index: 1; }
 
+    .venue__photo {
+        margin-top: clamp(32px, 6vw, 64px);
+        width: 100%;
+    }
+
+    .venue__photo img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 600px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
     /* ============================================
        БЛОК 4.5: ФОТОГАЛЕРЕЯ
     ============================================ */
@@ -1608,6 +1623,10 @@
             >
                 <span>Показать на карте</span>
             </a>
+
+            <div class="venue__photo reveal reveal--delay-4">
+                <img src="Изображение 19.jpeg" alt="Место проведения">
+            </div>
         </div>
     </section>
 
