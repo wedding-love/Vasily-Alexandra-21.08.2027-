@@ -1,3 +1,8 @@
+Готово! Я добавил фотографии в блок с дресс-кодом. Для картинок с прозрачным фоном (Photoroom) я сделал аккуратные подложки в тон всему дизайну, чтобы они смотрелись гармонично, а сами изображения вписались без искажений.
+
+Вот полный обновленный код страницы:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -566,6 +571,114 @@
     .venue__btn span { position: relative; z-index: 1; }
 
     /* ============================================
+       БЛОК 4.5: ФОТОГАЛЕРЕЯ
+    ============================================ */
+    .gallery {
+        background: #fbfbf6;
+        padding:
+            clamp(56px, 11vw, 150px)
+            0
+            max(clamp(56px, 11vw, 150px), env(safe-area-inset-bottom))
+            0;
+        overflow: hidden;
+    }
+
+    .gallery__inner { max-width: 960px; margin: 0 auto; text-align: center; padding: 0 20px; }
+
+    .gallery__kicker {
+        font-family: 'Manrope', sans-serif;
+        font-size: clamp(9px, 1.4vw, 11px);
+        font-weight: 500;
+        letter-spacing: 0.45em;
+        text-transform: uppercase;
+        color: var(--olive-soft);
+        margin-bottom: clamp(14px, 2.5vw, 22px);
+    }
+
+    .gallery__title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(26px, 5.5vw, 56px);
+        font-weight: 400;
+        font-style: italic;
+        color: var(--olive);
+        line-height: 1.3;
+        letter-spacing: 0.005em;
+        margin-bottom: clamp(32px, 5vw, 56px);
+    }
+
+    .gallery__slider-container {
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .gallery__track {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+        padding: 10px 5vw 30px 5vw; /* Отступы для мобильных свайпов */
+        cursor: grab;
+    }
+
+    .gallery__track:active { cursor: grabbing; }
+    .gallery__track::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+
+    .gallery__slide {
+        flex: 0 0 85%;
+        max-width: 700px;
+        scroll-snap-align: center;
+    }
+
+    .gallery__slide img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        pointer-events: none; /* Чтобы не мешало свайпу */
+    }
+
+    .gallery__btn {
+        display: none; /* Показываем только на десктопе */
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        color: var(--olive);
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .gallery__btn:hover {
+        background: var(--olive);
+        color: #ffffff;
+        border-color: var(--olive);
+    }
+
+    .gallery__btn--prev { left: -25px; }
+    .gallery__btn--next { right: -25px; }
+
+    @media (min-width: 768px) {
+        .gallery__btn { display: flex; }
+        .gallery__track { padding: 10px 40px 30px 40px; }
+        .gallery__slide { flex: 0 0 75%; }
+    }
+
+    /* ============================================
        БЛОК 5: ТАЙМЕР
     ============================================ */
     .countdown {
@@ -724,6 +837,29 @@
     .dresscode__card {
         border-top: 1px solid var(--line);
         padding-top: clamp(18px, 3vw, 28px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Стили для контейнера с фото в дресс-коде */
+    .dresscode__card-photo {
+        width: 100%;
+        height: clamp(240px, 35vw, 360px);
+        background: #fbfbf6;
+        border-radius: 4px;
+        margin-bottom: clamp(16px, 3vw, 24px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        overflow: hidden;
+    }
+
+    .dresscode__card-photo img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
     }
 
     .dresscode__card-label {
@@ -1224,6 +1360,7 @@
         .invitation,
         .timeline,
         .venue,
+        .gallery,
         .countdown,
         .dresscode,
         .gifts,
@@ -1245,6 +1382,7 @@
         .invitation,
         .timeline,
         .venue,
+        .gallery,
         .countdown,
         .dresscode,
         .gifts,
@@ -1277,7 +1415,8 @@
         .dresscode__title,
         .gifts__title,
         .rsvp__title,
-        .venue__title { font-size: 62px; }
+        .venue__title,
+        .gallery__title { font-size: 62px; }
 
         .timeline__event { font-size: 19px; }
         .countdown__number { font-size: 116px; }
@@ -1298,7 +1437,8 @@
         .dresscode__title,
         .gifts__title,
         .rsvp__title,
-        .venue__title { font-size: 76px; }
+        .venue__title,
+        .gallery__title { font-size: 76px; }
 
         .timeline__event { font-size: 22px; }
         .timeline__note { font-size: 16px; }
@@ -1477,6 +1617,32 @@
         </div>
     </section>
 
+    <!-- БЛОК 4.5: ФОТОГАЛЕРЕЯ -->
+    <section class="gallery">
+        <div class="gallery__inner">
+            <div class="gallery__kicker reveal">Наши моменты</div>
+            <h2 class="gallery__title reveal reveal--delay-1">Фотогалерея</h2>
+        </div>
+
+        <div class="gallery__slider-container reveal reveal--delay-2">
+            <button class="gallery__btn gallery__btn--prev" id="gallery-prev" aria-label="Предыдущее фото">←</button>
+            
+            <div class="gallery__track" id="gallery-track">
+                <div class="gallery__slide">
+                    <img src="IMG_1673 - Александра Маркова.JPG" alt="Фото 1">
+                </div>
+                <div class="gallery__slide">
+                    <img src="IMG_1674 - Александра Маркова.JPG" alt="Фото 2">
+                </div>
+                <div class="gallery__slide">
+                    <img src="IMG_5464 - Александра Маркова.JPG" alt="Фото 3">
+                </div>
+            </div>
+
+            <button class="gallery__btn gallery__btn--next" id="gallery-next" aria-label="Следующее фото">→</button>
+        </div>
+    </section>
+
     <!-- БЛОК 5: ТАЙМЕР -->
     <section class="countdown">
         <div class="countdown__inner">
@@ -1549,6 +1715,10 @@
 
             <div class="dresscode__cards">
                 <div class="dresscode__card reveal reveal--delay-2">
+                    <!-- Добавлено фото девушки -->
+                    <div class="dresscode__card-photo">
+                        <img src="Изображение 17-Photoroom.png" alt="Пример женского образа">
+                    </div>
                     <div class="dresscode__card-label">Для неё</div>
                     <h3 class="dresscode__card-title">Вечерние образы</h3>
                     <p class="dresscode__card-text">
@@ -1559,6 +1729,10 @@
                 </div>
 
                 <div class="dresscode__card reveal reveal--delay-3">
+                    <!-- Добавлено фото мужчины -->
+                    <div class="dresscode__card-photo">
+                        <img src="Изображение 18-Photoroom.png" alt="Пример мужского образа">
+                    </div>
                     <div class="dresscode__card-label">Для него</div>
                     <h3 class="dresscode__card-title">Классические костюмы</h3>
                     <p class="dresscode__card-text">
@@ -2113,6 +2287,43 @@
     setInterval(updateCountdown, 1000);
 
     /* ============================================================
+       СЛАЙДЕР ГАЛЕРЕИ
+    ============================================================ */
+    const track = document.getElementById('gallery-track');
+    const slides = track.querySelectorAll('.gallery__slide');
+    const prevBtn = document.getElementById('gallery-prev');
+    const nextBtn = document.getElementById('gallery-next');
+    
+    let currentIndex = 0;
+
+    function updateSlider() {
+        // Вычисляем ширину одного слайда + отступ (gap: 20px)
+        const slideWidth = slides[0].offsetWidth + 20; 
+        track.scrollTo({ left: slideWidth * currentIndex, behavior: 'smooth' });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < slides.length - 1) {
+            currentIndex++;
+            updateSlider();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
+    });
+
+    // Сброс индекса при ручном свайпе (просто для синхронизации стрелок)
+    track.addEventListener('scroll', () => {
+        const slideWidth = slides[0].offsetWidth + 20;
+        const scrollLeft = track.scrollLeft;
+        currentIndex = Math.round(scrollLeft / slideWidth);
+    });
+
+    /* ============================================================
        RSVP — ОТПРАВКА НА FORMSPREE
     ============================================================ */
     const form      = document.getElementById('rsvp-form');
@@ -2165,3 +2376,4 @@
 
 </body>
 </html>
+```
