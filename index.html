@@ -704,13 +704,6 @@
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
 
-    .dresscode__rect--olive  { background: #737038; }
-    .dresscode__rect--lime   { background: #b2f24f; }
-    .dresscode__rect--cream  { background: #f5edc9; }
-    .dresscode__rect--brown  { background: #7a5230; }
-    .dresscode__rect--black  { background: #1a1a1a; }
-    .dresscode__rect--white  { background: #ffffff; }
-
     .dresscode__swatch-label {
         font-family: 'Manrope', sans-serif;
         font-size: clamp(8px, 1vw, 10px);
@@ -849,17 +842,6 @@
         line-height: 1.8;
         color: var(--olive-mid);
         letter-spacing: 0.01em;
-    }
-
-    .gifts__drinks {
-        margin-top: clamp(36px, 6vw, 64px);
-        font-family: 'Manrope', sans-serif;
-        font-size: clamp(11px, 1.4vw, 13px);
-        font-weight: 400;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: var(--olive-soft);
-        line-height: 2;
     }
 
     /* ============================================
@@ -1528,38 +1510,39 @@
     <section class="dresscode">
         <div class="dresscode__inner">
             <div class="dresscode__kicker reveal">Дресс-код</div>
-            <h2 class="dresscode__title reveal reveal--delay-1">Палитра вечера</h2>
+            <h2 class="dresscode__title reveal reveal--delay-1">Вечерняя палитра</h2>
 
             <p class="dresscode__text reveal reveal--delay-1">
-                Мы будем счастливы, если ваш образ поддержит палитру нашего
-                праздника. Вечерние наряды в оттенках оливы, лайма, сливочного
-                масла, коричневого, чёрного и белого — то, что сделает этот
-                вечер особенно красивым.
+                Мы будем очень рады, если вы поддержите цветовую гамму нашего праздника. 
+                Для нас идеальный дресс-код — это вечерние наряды в оттенках оливы, 
+                коричневого и цвета сливочного масла. Классические чёрный и белый 
+                также будут смотреться безупречно.
             </p>
 
             <div class="dresscode__palette reveal reveal--delay-2">
                 <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--olive"></div>
+                    <!-- Оливковый #737038 -->
+                    <div class="dresscode__rect" style="background-color: #737038;"></div>
                     <div class="dresscode__swatch-label">Оливковый</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--lime"></div>
-                    <div class="dresscode__swatch-label">Лаймовый</div>
-                </div>
-                <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--cream"></div>
+                    <!-- Сливочный #F5EDC9 -->
+                    <div class="dresscode__rect" style="background-color: #f5edc9; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);"></div>
                     <div class="dresscode__swatch-label">Сливочный</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--brown"></div>
+                    <!-- Коричневый (визуальный цвет) -->
+                    <div class="dresscode__rect" style="background-color: #5c3d2e;"></div>
                     <div class="dresscode__swatch-label">Коричневый</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--black"></div>
+                    <!-- Черный -->
+                    <div class="dresscode__rect" style="background-color: #111111;"></div>
                     <div class="dresscode__swatch-label">Чёрный</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <div class="dresscode__rect dresscode__rect--white"></div>
+                    <!-- Белый -->
+                    <div class="dresscode__rect" style="background-color: #ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);"></div>
                     <div class="dresscode__swatch-label">Белый</div>
                 </div>
             </div>
@@ -1567,21 +1550,21 @@
             <div class="dresscode__cards">
                 <div class="dresscode__card reveal reveal--delay-2">
                     <div class="dresscode__card-label">Для неё</div>
-                    <h3 class="dresscode__card-title">Вечерние платья</h3>
+                    <h3 class="dresscode__card-title">Вечерние образы</h3>
                     <p class="dresscode__card-text">
-                        Платья миди или макси в оттенках палитры, струящиеся
-                        ткани, мягкий трикотаж. Аксессуары — тёплых тонов,
-                        обувь — удобная для танцев и прогулок.
+                        Элегантные платья в пол или миди в оттенках вашей палитры. 
+                        Струящиеся ткани, благородный шелк или атлас. Дополните образ 
+                        изящными аксессуарами и удобной обувью для танцев.
                     </p>
                 </div>
 
                 <div class="dresscode__card reveal reveal--delay-3">
                     <div class="dresscode__card-label">Для него</div>
-                    <h3 class="dresscode__card-title">Костюмы и рубашки</h3>
+                    <h3 class="dresscode__card-title">Классические костюмы</h3>
                     <p class="dresscode__card-text">
-                        Костюмы классического кроя, рубашки спокойных оттенков,
-                        лоферы или дерби. Жилеты, галстуки или бабочки —
-                        в палитре торжества.
+                        Строгие костюмы, рубашки спокойных оттенков, лоферы или дерби. 
+                        Отлично подойдут жилеты, галстуки или бабочки. Главное — 
+                        чувствовать себя уверенно и празднично.
                     </p>
                 </div>
             </div>
@@ -1622,10 +1605,6 @@
                         откроем на празднике.
                     </p>
                 </div>
-            </div>
-
-            <div class="gifts__drinks reveal reveal--delay-3">
-                Шампанское · Белое вино · Водка · Ром · Безалкогольные
             </div>
         </div>
     </section>
