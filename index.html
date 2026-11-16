@@ -336,16 +336,16 @@
         margin: clamp(32px, 5vw, 48px) auto;
     }
 
-    .calendar { max-width: 420px; margin: 0 auto; width: 100%; }
+    .calendar { max-width: 460px; margin: 0 auto; width: 100%; }
 
     .calendar__month {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(10px, 1.5vw, 12px);
+        font-size: clamp(11px, 1.6vw, 13px);
         font-weight: 400;
         letter-spacing: 0.35em;
         text-transform: uppercase;
         color: var(--olive);
-        margin-bottom: clamp(14px, 3vw, 24px);
+        margin-bottom: clamp(16px, 3vw, 26px);
     }
 
     .calendar__grid {
@@ -356,7 +356,7 @@
 
     .calendar__weekday {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(8px, 1.3vw, 10px);
+        font-size: clamp(9px, 1.4vw, 11px);
         font-weight: 400;
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -367,7 +367,7 @@
 
     .calendar__day {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(12px, 2vw, 16px);
+        font-size: clamp(14px, 2.2vw, 18px);
         font-weight: 300;
         color: var(--olive-mid);
         aspect-ratio: 1 / 1;
@@ -627,18 +627,18 @@
         gap: 20px;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE/Edge */
-        padding: 10px 5vw 30px 5vw; /* Отступы для мобильных свайпов */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 10px 5vw 30px 5vw;
         cursor: grab;
     }
 
     .gallery__track:active { cursor: grabbing; }
-    .gallery__track::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    .gallery__track::-webkit-scrollbar { display: none; }
 
     .gallery__slide {
-        flex: 0 0 80%; /* Сузил для вертикальных фото */
-        max-width: 420px; /* Ограничил максимальную ширину */
+        flex: 0 0 80%;
+        max-width: 420px;
         scroll-snap-align: center;
     }
 
@@ -646,15 +646,15 @@
         display: block;
         width: 100%;
         height: auto;
-        aspect-ratio: 3 / 4; /* Сделали фото вертикальными */
+        aspect-ratio: 3 / 4;
         object-fit: cover;
         border-radius: 4px;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        pointer-events: none; /* Чтобы не мешало свайпу */
+        pointer-events: none;
     }
 
     .gallery__btn {
-        display: none; /* Показываем только на десктопе */
+        display: none;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
@@ -685,7 +685,7 @@
     @media (min-width: 768px) {
         .gallery__btn { display: flex; }
         .gallery__track { padding: 10px 40px 30px 40px; }
-        .gallery__slide { flex: 0 0 45%; } /* На десктопе показываем по два фото */
+        .gallery__slide { flex: 0 0 45%; }
     }
 
     /* ============================================
@@ -804,37 +804,41 @@
         letter-spacing: 0.01em;
     }
 
+    /* Палитра — строго в одну строку */
     .dresscode__palette {
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        gap: clamp(10px, 2.4vw, 24px);
+        gap: clamp(6px, 1.5vw, 24px);
         margin-bottom: clamp(40px, 8vw, 88px);
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .dresscode__swatch {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        min-width: 0;
     }
 
     .dresscode__rect {
-        width: clamp(64px, 10vw, 92px);
-        height: clamp(40px, 5.5vw, 52px);
+        width: clamp(48px, 9vw, 92px);
+        height: clamp(34px, 5.5vw, 52px);
         border-radius: 3px;
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+        flex-shrink: 0;
     }
 
     .dresscode__swatch-label {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(8px, 1vw, 10px);
+        font-size: clamp(8px, 1.1vw, 11px);
         font-weight: 500;
-        letter-spacing: 0.2em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--olive-soft);
         text-align: center;
+        line-height: 1.3;
     }
 
     .dresscode__cards {
@@ -851,16 +855,14 @@
         flex-direction: column;
     }
 
+    /* Контейнер для фото — без подложки */
     .dresscode__card-photo {
         width: 100%;
         height: clamp(240px, 35vw, 360px);
-        background: #fbfbf6;
-        border-radius: 4px;
         margin-bottom: clamp(16px, 3vw, 24px);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 15px;
         overflow: hidden;
     }
 
@@ -947,10 +949,13 @@
         letter-spacing: 0.01em;
     }
 
+    /* Одна карточка — одна колонка по центру */
     .gifts__cards {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: clamp(28px, 4vw, 56px);
+        max-width: 560px;
+        margin: 0 auto;
         text-align: left;
     }
 
@@ -1217,13 +1222,13 @@
         background: #ffffff;
         padding:
             clamp(56px, 10vw, 130px)
-            max(clamp(20px, 5vw, 48px), env(safe-area-inset-right))
+            max(clamp(16px, 4vw, 48px), env(safe-area-inset-right))
             max(clamp(56px, 10vw, 130px), env(safe-area-inset-bottom))
-            max(clamp(20px, 5vw, 48px), env(safe-area-inset-left));
+            max(clamp(16px, 4vw, 48px), env(safe-area-inset-left));
         text-align: center;
     }
 
-    .contacts__inner { max-width: 900px; margin: 0 auto; }
+    .contacts__inner { max-width: 1000px; margin: 0 auto; }
 
     .contacts__kicker {
         font-family: 'Manrope', sans-serif;
@@ -1245,23 +1250,27 @@
         margin-bottom: clamp(32px, 6vw, 56px);
     }
 
+    /* Все контакты — строго в одну строку */
     .contacts__list {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
-        gap: clamp(24px, 5vw, 64px);
+        align-items: flex-start;
+        gap: clamp(6px, 2vw, 64px);
     }
 
     .contacts__item {
         display: flex;
         flex-direction: column;
         gap: 6px;
-        min-width: 180px;
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 280px;
     }
 
     .contacts__name {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(13px, 1.7vw, 15px);
+        font-size: clamp(12px, 1.7vw, 16px);
         font-weight: 500;
         color: var(--olive);
         letter-spacing: 0.02em;
@@ -1269,9 +1278,9 @@
 
     .contacts__role {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(9px, 1.2vw, 10px);
+        font-size: clamp(8px, 1.15vw, 10px);
         font-weight: 500;
-        letter-spacing: 0.3em;
+        letter-spacing: 0.25em;
         text-transform: uppercase;
         color: var(--olive-soft);
         margin-bottom: 4px;
@@ -1279,12 +1288,13 @@
 
     .contacts__phone {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(13px, 1.7vw, 16px);
+        font-size: clamp(10px, 1.6vw, 17px);
         font-weight: 300;
         color: var(--olive-mid);
         text-decoration: none;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.04em;
         transition: color 0.3s ease;
+        white-space: nowrap;
     }
 
     .contacts__phone:hover { color: var(--olive); }
@@ -1295,7 +1305,7 @@
     @media (min-width: 481px) and (max-width: 900px) {
         .invitation__inner,
         .timeline__inner { max-width: 560px; }
-        .calendar { max-width: 400px; }
+        .calendar { max-width: 440px; }
     }
 
     @media (max-width: 700px) {
@@ -1323,7 +1333,15 @@
         .countdown__row { gap: 6px; }
         .countdown__sep { height: 22px; }
 
-        .contacts__list { flex-direction: column; align-items: center; gap: 28px; }
+        .contacts__list { gap: 4px; }
+        .contacts__phone { font-size: 10px; letter-spacing: 0; }
+        .contacts__name { font-size: 12px; }
+        .contacts__role { font-size: 8px; letter-spacing: 0.15em; }
+
+        /* Палитра на мобильных — компактнее, но всё ещё в одну строку */
+        .dresscode__palette { gap: 6px; }
+        .dresscode__rect { width: 52px; height: 34px; }
+        .dresscode__swatch-label { font-size: 8px; letter-spacing: 0.03em; }
     }
 
     @media (max-width: 380px) {
@@ -1338,22 +1356,29 @@
         .countdown__number { font-size: clamp(30px, 10vw, 44px); }
         .countdown__label { font-size: 8px; letter-spacing: 0.25em; }
 
-        .calendar { max-width: 290px; }
-        .calendar__weekday { font-size: 7px; letter-spacing: 0.05em; }
-        .calendar__day { font-size: 11px; }
+        .calendar { max-width: 330px; }
+        .calendar__weekday { font-size: 8px; letter-spacing: 0.05em; }
+        .calendar__day { font-size: 14px; }
 
         .timeline__item { grid-template-columns: 48px 1fr; gap: 12px; }
         .timeline__time { font-size: 11px; }
         .timeline__event { font-size: 13px; }
 
-        .dresscode__palette { gap: 8px; }
-        .dresscode__rect { width: 58px; height: 34px; }
-        .dresscode__swatch-label { font-size: 7px; letter-spacing: 0.1em; }
+        .contacts__phone { font-size: 9px; }
+        .contacts__name { font-size: 11px; }
+        .contacts__role { font-size: 7px; letter-spacing: 0.1em; }
+
+        .dresscode__palette { gap: 4px; }
+        .dresscode__rect { width: 46px; height: 30px; }
+        .dresscode__swatch-label { font-size: 7px; letter-spacing: 0; }
     }
 
     @media (max-width: 320px) {
         .countdown__number { font-size: 28px; }
         .calendar__weekday { font-size: 7px; }
+
+        .contacts__phone { font-size: 8.5px; }
+        .contacts__name { font-size: 10px; }
     }
 
     /* Мобильный ландшафт */
@@ -1504,28 +1529,6 @@
                     <div class="calendar__weekday">Сб</div>
                     <div class="calendar__weekday">Вс</div>
 
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-
-                    <div class="calendar__day">1</div>
-                    <div class="calendar__day">2</div>
-                    <div class="calendar__day">3</div>
-                    <div class="calendar__day">4</div>
-                    <div class="calendar__day">5</div>
-                    <div class="calendar__day">6</div>
-                    <div class="calendar__day">7</div>
-                    <div class="calendar__day">8</div>
-                    <div class="calendar__day">9</div>
-                    <div class="calendar__day">10</div>
-                    <div class="calendar__day">11</div>
-                    <div class="calendar__day">12</div>
-                    <div class="calendar__day">13</div>
-                    <div class="calendar__day">14</div>
-                    <div class="calendar__day">15</div>
                     <div class="calendar__day">16</div>
                     <div class="calendar__day">17</div>
                     <div class="calendar__day">18</div>
@@ -1542,21 +1545,6 @@
                     </div>
 
                     <div class="calendar__day">22</div>
-                    <div class="calendar__day">23</div>
-                    <div class="calendar__day">24</div>
-                    <div class="calendar__day">25</div>
-                    <div class="calendar__day">26</div>
-                    <div class="calendar__day">27</div>
-                    <div class="calendar__day">28</div>
-                    <div class="calendar__day">29</div>
-                    <div class="calendar__day">30</div>
-                    <div class="calendar__day">31</div>
-
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
-                    <div class="calendar__day calendar__day--empty" aria-hidden="true"></div>
                 </div>
             </div>
         </div>
@@ -1703,27 +1691,22 @@
 
             <div class="dresscode__palette reveal reveal--delay-2">
                 <div class="dresscode__swatch">
-                    <!-- Оливковый #737038 -->
                     <div class="dresscode__rect" style="background-color: #737038;"></div>
                     <div class="dresscode__swatch-label">Оливковый</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <!-- Сливочный #F5EDC9 -->
                     <div class="dresscode__rect" style="background-color: #f5edc9; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);"></div>
                     <div class="dresscode__swatch-label">Сливочный</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <!-- Коричневый (визуальный цвет) -->
                     <div class="dresscode__rect" style="background-color: #5c3d2e;"></div>
                     <div class="dresscode__swatch-label">Коричневый</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <!-- Черный -->
                     <div class="dresscode__rect" style="background-color: #111111;"></div>
                     <div class="dresscode__swatch-label">Чёрный</div>
                 </div>
                 <div class="dresscode__swatch">
-                    <!-- Белый -->
                     <div class="dresscode__rect" style="background-color: #ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);"></div>
                     <div class="dresscode__swatch-label">Белый</div>
                 </div>
@@ -1732,7 +1715,7 @@
             <div class="dresscode__cards">
                 <div class="dresscode__card reveal reveal--delay-2">
                     <div class="dresscode__card-photo">
-                        <img src="Изображение 17-Photoroom.png" alt="Пример женского образа">
+                        <img src="Изображение 35-Photoroom.png" alt="Пример женского образа">
                     </div>
                     <div class="dresscode__card-label">Для неё</div>
                     <h3 class="dresscode__card-title">Вечерние образы</h3>
@@ -1745,7 +1728,7 @@
 
                 <div class="dresscode__card reveal reveal--delay-3">
                     <div class="dresscode__card-photo">
-                        <img src="Изображение 18-Photoroom.png" alt="Пример мужского образа">
+                        <img src="Изображение 34-Photoroom.png" alt="Пример мужского образа">
                     </div>
                     <div class="dresscode__card-label">Для него</div>
                     <h3 class="dresscode__card-title">Классические костюмы</h3>
@@ -1773,16 +1756,6 @@
 
             <div class="gifts__cards">
                 <div class="gifts__card reveal reveal--delay-2">
-                    <div class="gifts__card-label">Пожелание</div>
-                    <h3 class="gifts__card-title">Конверт с пожеланиями</h3>
-                    <p class="gifts__card-text">
-                        Мы будем благодарны за конверт с тёплыми пожеланиями —
-                        так мы сможем осуществить нашу общую мечту и сохранить
-                        память о ваших словах.
-                    </p>
-                </div>
-
-                <div class="gifts__card reveal reveal--delay-3">
                     <div class="gifts__card-label">Вместо цветов</div>
                     <h3 class="gifts__card-title">Цветы — да, но…</h3>
                     <p class="gifts__card-text">
@@ -2311,7 +2284,6 @@
     let currentIndex = 0;
 
     function updateSlider() {
-        // Вычисляем ширину одного слайда + отступ (gap: 20px)
         const slideWidth = slides[0].offsetWidth + 20; 
         track.scrollTo({ left: slideWidth * currentIndex, behavior: 'smooth' });
     }
@@ -2330,7 +2302,6 @@
         }
     });
 
-    // Сброс индекса при ручном свайпе (просто для синхронизации стрелок)
     track.addEventListener('scroll', () => {
         const slideWidth = slides[0].offsetWidth + 20;
         const scrollLeft = track.scrollLeft;
