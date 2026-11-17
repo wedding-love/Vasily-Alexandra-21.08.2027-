@@ -13,7 +13,7 @@
 
 <style>
     /* ============================================
-       ПАЛИТРА — зелёная (из второго файла)
+       ПАЛИТРА — зелёная
     ============================================ */
     :root {
         --olive:       #5d7a5a;
@@ -178,7 +178,7 @@
         filter: brightness(1.02);
     }
 
-    /* Собранный фрагмент — всегда сверху, его нельзя перекрыть */
+    /* Собранный фрагмент — всегда сверху */
     .piece.snapped {
         cursor: default;
         opacity: 1;
@@ -1469,7 +1469,7 @@
                 <li class="timeline__item reveal reveal--delay-4">
                     <span class="timeline__time">16:00</span>
                     <span class="timeline__event">Праздничный ужин
-                        <span class="timeline__note">Банкет, тосты, первый танец и танцы до позднего</span>
+                        <span class="timeline__note">Банкет, тосты, первый танец и танцы до позднего вечера</span>
                     </span>
                 </li>
             </ul>
@@ -1548,10 +1548,9 @@
             <div class="dresscode__kicker reveal">Дресс-код</div>
             <h2 class="dresscode__title reveal reveal--delay-1">Вечерняя палитра</h2>
             <p class="dresscode__text reveal reveal--delay-1">
-                Мы будем очень рады, если вы поддержите цветовую гамму нашего праздника.
-                Для нас идеальный дресс-код — это вечерние наряды в оттенках оливы,
-                коричневого и цвета сливочного масла. Классические чёрный и белый
-                также будут смотреться безупречно.
+                Будем рады, если вы поддержите палитру нашего праздника —
+                оттенки оливы, коричневого и сливочного. Классические
+                чёрный и белый также уместны.
             </p>
             <div class="dresscode__palette reveal reveal--delay-2">
                 <div class="dresscode__swatch">
@@ -1583,9 +1582,8 @@
                     <div class="dresscode__card-label">Для неё</div>
                     <h3 class="dresscode__card-title">Вечерние образы</h3>
                     <p class="dresscode__card-text">
-                        Элегантные платья в пол или миди в оттенках вашей палитры.
-                        Струящиеся ткани, благородный шелк или атлас. Дополните образ
-                        изящными аксессуарами и удобной обувью для танцев.
+                        Элегантные платья в пол или миди в оттенках нашей палитры.
+                        Струящиеся ткани и удобная обувь для танцев.
                     </p>
                 </div>
                 <div class="dresscode__card reveal reveal--delay-3">
@@ -1595,9 +1593,8 @@
                     <div class="dresscode__card-label">Для него</div>
                     <h3 class="dresscode__card-title">Классические костюмы</h3>
                     <p class="dresscode__card-text">
-                        Строгие костюмы, рубашки спокойных оттенков, лоферы или дерби.
-                        Отлично подойдут жилеты, галстуки или бабочки. Главное —
-                        чувствовать себя уверенно и празднично.
+                        Строгие костюмы, рубашки спокойных оттенков, классическая
+                        обувь. Главное — чувствовать себя уверенно.
                     </p>
                 </div>
             </div>
@@ -1808,6 +1805,79 @@
         img.src = c.toDataURL();
     }
 
+    /* ---- Геометрия / пересечения ---- */
+    function rectOf(p) {
+        let l, t;
+        if (p.classList.contains('snapped') || p.classList.contains('snapping')) {
+            l = parseFloat(p.dataset.targetLeft) || 0;
+            t = parseFloat(p.dataset.targetTop)  || 0;
+        } else {
+            l = parseFloat(p.style.left) || 0;
+            t = parseFloat(p.style.top)  || 0;
+        }
+        return { left: l, top: t, right: l + pieceW, bottom: t + pieceH };
+    }
+
+    function overlaps(r1, r2) {
+        return !(r1.right <= r2.left || r1.left >= r2.right ||
+                 r1.bottom <= r2.top || r1.top >= r2.bottom);
+    }
+
+    /* Ищем свободную позицию, максимально далёкую от occupiedRects */
+    function findFreeSpot(occupiedRects) {
+        const bw = Math.max(1, board.clientWidth  - pieceW);
+        const bh = Math.max(1, board.clientHeight - pieceH);
+        let best = null, bestCount = Infinity;
+        for (let i = 0; i < 200; i++) {
+            const l = Math.random() * bw;
+            const t = Math.random() * bh;
+            const r = { left: l, top: t, right: l + pieceW, bottom: t + pieceH };
+            let count = 0;
+            for (let j = 0; j < occupiedRects.length; j++) {
+                if (overlaps(r, occupiedRects[j])) count++;
+            }
+            if (count === 0) return { left: l, top: t };
+            if (count < bestCount) { bestCount = count; best = { left: l, top: t }; }
+        }
+        return best || { left: 0, top: 0 };
+    }
+
+    /* Разводим куски, чтобы ничего не «залипало» под другими:
+       - если priorityPiece накрыт собранным — двигаем priorityPiece;
+       - любой другой несобранный кусок, который накрыт — двигаем. */
+    function resolveOverlaps(priorityPiece) {
+        const snappedPieces = pieces.filter(p =>
+            p.classList.contains('snapped') || p.classList.contains('snapping'));
+        const occupied = snappedPieces.map(rectOf);
+
+        // 1. Если брошенный кусок лёг под собранный — двигаем его самого
+        if (priorityPiece && snappedPieces.indexOf(priorityPiece) === -1) {
+            const pr = rectOf(priorityPiece);
+            if (occupied.some(o => overlaps(pr, o))) {
+                const spot = findFreeSpot(occupied);
+                priorityPiece.style.left = spot.left + 'px';
+                priorityPiece.style.top  = spot.top  + 'px';
+            }
+            occupied.push(rectOf(priorityPiece));
+        }
+
+        // 2. Любой другой несобранный кусок, который накрыт — двигаем
+        pieces.forEach(p => {
+            if (p === priorityPiece) return;
+            if (p.classList.contains('snapped') || p.classList.contains('snapping')) return;
+            const r = rectOf(p);
+            if (occupied.some(o => overlaps(r, o))) {
+                const spot = findFreeSpot(occupied);
+                p.style.left = spot.left + 'px';
+                p.style.top  = spot.top  + 'px';
+                occupied.push({ left: spot.left, top: spot.top,
+                                right: spot.left + pieceW, bottom: spot.top + pieceH });
+            } else {
+                occupied.push(r);
+            }
+        });
+    }
+
     function setupBoard(img) {
         const maxW = Math.min(window.innerWidth  * 0.85, 460);
         const maxH = Math.min(window.innerHeight * 0.60, 520);
@@ -1815,7 +1885,6 @@
         const ratio = img.width / img.height;
         let boardW = maxW;
         let boardH = boardW / ratio;
-
         if (boardH > maxH) {
             boardH = maxH;
             boardW = boardH * ratio;
@@ -1823,7 +1892,6 @@
 
         pieceW = Math.max(20, Math.floor(boardW / COLS));
         pieceH = Math.max(20, Math.floor(boardH / ROWS));
-
         boardW = pieceW * COLS;
         boardH = pieceH * ROWS;
 
@@ -1833,7 +1901,7 @@
         const bgUrl = "url('" + img.src + "')";
         const total = COLS * ROWS;
 
-        // Целевые позиции (сетка)
+        // Целевые позиции
         const targets = [];
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS; c++) {
@@ -1841,22 +1909,31 @@
             }
         }
 
-        // Случайные стартовые позиции (не в целевой точке)
+        // Стартовые позиции: стараемся не накладывать друг на друга
+        const placedRects = [];
         const starts = [];
         for (let i = 0; i < total; i++) {
-            let pos, tries = 0;
-            do {
-                pos = {
+            const t = targets[i];
+            let spot = null;
+            for (let attempt = 0; attempt < 120; attempt++) {
+                const l = Math.random() * Math.max(1, boardW - pieceW);
+                const tp = Math.random() * Math.max(1, boardH - pieceH);
+                if (Math.abs(l - t.left) <= SNAP_TOLERANCE * 2 &&
+                    Math.abs(tp - t.top) <= SNAP_TOLERANCE * 2) continue;
+                const r = { left: l, top: tp, right: l + pieceW, bottom: tp + pieceH };
+                if (placedRects.some(pr => overlaps(r, pr))) continue;
+                spot = { left: l, top: tp };
+                break;
+            }
+            if (!spot) {
+                spot = {
                     left: Math.random() * Math.max(1, boardW - pieceW),
                     top:  Math.random() * Math.max(1, boardH - pieceH)
                 };
-                tries++;
-                const dx = pos.left - targets[i].left;
-                const dy = pos.top  - targets[i].top;
-                if (Math.abs(dx) > SNAP_TOLERANCE * 2 ||
-                    Math.abs(dy) > SNAP_TOLERANCE * 2) break;
-            } while (tries < 30);
-            starts.push(pos);
+            }
+            placedRects.push({ left: spot.left, top: spot.top,
+                               right: spot.left + pieceW, bottom: spot.top + pieceH });
+            starts.push(spot);
         }
 
         for (let i = 0; i < total; i++) {
@@ -1878,6 +1955,9 @@
             board.appendChild(p);
         }
 
+        // Чистим возможные остаточные наложения от fallback-раскладки
+        resolveOverlaps(null);
+
         document.addEventListener('pointermove', onPointerMove, { passive: false });
         document.addEventListener('pointerup',   onPointerUp);
         document.addEventListener('pointercancel', onPointerUp);
@@ -1895,7 +1975,7 @@
         e.preventDefault();
         dragging  = p;
         p.classList.add('dragging');
-        p.style.zIndex = 999; // поверх всего во время перетаскивания
+        p.style.zIndex = 999;
         p.classList.remove('snapping');
 
         startX    = e.clientX;
@@ -1936,23 +2016,23 @@
         if (dx <= SNAP_TOLERANCE && dy <= SNAP_TOLERANCE) {
             snapPiece(p);
         } else {
-            // не снапнулось — убираем inline z-index,
-            // чтобы CSS-правило .piece { z-index: 1 } вернуло кусок под собранные
             p.style.zIndex = '';
         }
+
+        // После любого броска разводим куски, чтобы ничего не «залипало»
+        resolveOverlaps(p);
     }
 
     function snapPiece(p) {
         p.classList.add('snapping');
-        p.style.zIndex = 999; // на время анимации — сверху
-        // force reflow, чтобы transition сработал
+        p.style.zIndex = 999;
         void p.offsetWidth;
         p.style.left = p.dataset.targetLeft + 'px';
         p.style.top  = p.dataset.targetTop  + 'px';
 
         setTimeout(() => {
             p.classList.remove('snapping');
-            p.classList.add('snapped');     // CSS: z-index 50 → всегда сверху
+            p.classList.add('snapped');
             p.style.zIndex = '';
             p.classList.add('flash');
             setTimeout(() => p.classList.remove('flash'), 600);
@@ -1960,6 +2040,7 @@
             placedCount++;
             updateProgress();
             if (placedCount === pieces.length) finishPuzzle();
+            else resolveOverlaps(null);
         }, 300);
     }
 
@@ -1967,7 +2048,7 @@
         progress.textContent = placedCount + ' / ' + pieces.length;
     }
 
-    /* ---- Авто-завершение (если пользователь застрял) ---- */
+    /* ---- Авто-завершение ---- */
     function startAutoTimer() {
         autoTimer = setTimeout(() => {
             if (!finished) autoFinish();
@@ -2041,7 +2122,6 @@
         prev.addEventListener('click', () => scrollBySlide(-1));
         next.addEventListener('click', () => scrollBySlide(1));
 
-        // Перетаскивание мышью
         let isDown = false, startX2 = 0, startScroll = 0, moved = false;
         track.addEventListener('pointerdown', (e) => {
             if (e.pointerType !== 'mouse') return;
@@ -2065,7 +2145,7 @@
     })();
 
     /* ============================================================
-       ТАЙМЕР ОБРАТНОГО ОТСЧЁТА
+       ТАЙМЕР
     ============================================================ */
     (function initCountdown() {
         const target = new Date('2027-08-21T14:00:00');
@@ -2089,7 +2169,7 @@
     })();
 
     /* ============================================================
-       RSVP — отправка формы
+       RSVP
     ============================================================ */
     (function initRsvp() {
         const form = document.getElementById('rsvp-form');
@@ -2101,11 +2181,7 @@
             e.preventDefault();
             if (err) err.style.display = 'none';
 
-            // HTML5-валидация вручную (т.к. novalidate)
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+            if (!form.checkValidity()) { form.reportValidity(); return; }
 
             const btn = form.querySelector('.rsvp__submit');
             if (btn) btn.disabled = true;
