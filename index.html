@@ -12,9 +12,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 
 <style>
-    /* ============================================
-       ПАЛИТРА — зелёная
-    ============================================ */
     :root {
         --olive:       #5d7a5a;
         --olive-dark:  #466148;
@@ -80,9 +77,7 @@
         body { animation: none; opacity: 1; }
     }
 
-    /* ============================================
-       ПАЗЛ
-    ============================================ */
+    /* ПАЗЛ */
     #puzzle-screen {
         position: fixed;
         inset: 0;
@@ -151,7 +146,6 @@
         transition: opacity 0.3s ease;
     }
 
-    /* Во время перетаскивания — призрак ярче */
     #puzzle-board.dragging-active::before {
         opacity: 0.32;
     }
@@ -164,10 +158,10 @@
         transition: opacity 0.4s ease, box-shadow 0.3s ease, filter 0.4s ease;
         will-change: transform, left, top;
         opacity: 0.82;
-        outline: 1px solid rgba(255, 255, 255, 0.6);
+        outline: 1px solid rgba(255, 255, 255, 0.7);
         outline-offset: -1px;
         border-radius: 2px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         z-index: 1;
     }
 
@@ -1599,6 +1593,8 @@
     const ROWS           = 3;
     const SNAP_TOLERANCE = 22;
     const AUTO_FINISH_SEC = 45;
+    const MIN_VISIBLE_START = 0.55; // минимум видимой площади при раскладке
+    const MIN_VISIBLE_KEEP  = 0.35; // минимум видимой площади после броска
 
     const board    = document.getElementById('puzzle-board');
     const screen   = document.getElementById('puzzle-screen');
@@ -1656,6 +1652,7 @@
         img.src = c.toDataURL();
     }
 
+    /* ---- Геометрия ---- */
     function rectOf(p) {
         let l, t;
         if (p.classList.contains('snapped') || p.classList.contains('snapping')) {
@@ -1673,19 +1670,31 @@
                  a.bottom <= b.top || a.top >= b.bottom);
     }
 
+    /* Доля видимой площади куска, не покрытой другими */
+    function visibleFraction(rect, coverRects) {
+        const area = pieceW * pieceH;
+        let covered = 0;
+        for (let i = 0; i < coverRects.length; i++) {
+            const o = coverRects[i];
+            const ox = Math.max(0, Math.min(rect.right, o.right) - Math.max(rect.left, o.left));
+            const oy = Math.max(0, Math.min(rect.bottom, o.bottom) - Math.max(rect.top, o.top));
+            covered += ox * oy;
+        }
+        return Math.max(0, (area - covered) / area);
+    }
+
     function findFreeSpot(occupied) {
         const bw = Math.max(1, board.clientWidth  - pieceW);
         const bh = Math.max(1, board.clientHeight - pieceH);
-        let best = null, bestCount = Infinity;
+        let best = null, bestVis = -1;
 
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 250; i++) {
             const l = Math.random() * bw;
             const t = Math.random() * bh;
             const r = { left: l, top: t, right: l + pieceW, bottom: t + pieceH };
-            let c = 0;
-            for (let j = 0; j < occupied.length; j++) if (overlaps(r, occupied[j])) c++;
-            if (c === 0) return { left: l, top: t };
-            if (c < bestCount) { bestCount = c; best = { left: l, top: t }; }
+            const vis = visibleFraction(r, occupied);
+            if (vis >= 0.85) return { left: l, top: t };
+            if (vis > bestVis) { bestVis = vis; best = { left: l, top: t }; }
         }
 
         const stepX = Math.max(10, pieceW / 2);
@@ -1693,68 +1702,15 @@
         for (let l = 0; l <= bw; l += stepX) {
             for (let t = 0; t <= bh; t += stepY) {
                 const r = { left: l, top: t, right: l + pieceW, bottom: t + pieceH };
-                let c = 0;
-                for (let j = 0; j < occupied.length; j++) if (overlaps(r, occupied[j])) c++;
-                if (c === 0) return { left: l, top: t };
-                if (c < bestCount) { bestCount = c; best = { left: l, top: t }; }
+                const vis = visibleFraction(r, occupied);
+                if (vis >= 0.85) return { left: l, top: t };
+                if (vis > bestVis) { bestVis = vis; best = { left: l, top: t }; }
             }
         }
         return best || { left: 0, top: 0 };
     }
 
-    function ensurePieceAccessible(piece) {
-        if (piece.classList.contains('snapped') || piece.classList.contains('snapping')) return;
-
-        const pr = rectOf(piece);
-        const snappedRects = pieces
-            .filter(x => x.classList.contains('snapped') || x.classList.contains('snapping'))
-            .map(rectOf);
-
-        if (snappedRects.some(o => overlaps(pr, o))) {
-            const spot = findFreeSpot(snappedRects);
-            piece.style.left = spot.left + 'px';
-            piece.style.top  = spot.top  + 'px';
-            return;
-        }
-
-        const occupied = snappedRects.concat([pr]);
-        pieces.forEach(x => {
-            if (x === piece) return;
-            if (x.classList.contains('snapped') || x.classList.contains('snapping')) return;
-
-            const xr = rectOf(x);
-            if (overlaps(xr, pr)) {
-                const spot = findFreeSpot(occupied);
-                x.style.left = spot.left + 'px';
-                x.style.top  = spot.top  + 'px';
-                occupied.push({ left: spot.left, top: spot.top,
-                                right: spot.left + pieceW, bottom: spot.top + pieceH });
-            }
-        });
-    }
-
-    function evacuateUnderSnapped(snappedPiece) {
-        const pr = rectOf(snappedPiece);
-        const snappedRects = pieces
-            .filter(x => x.classList.contains('snapped') || x.classList.contains('snapping'))
-            .map(rectOf);
-        const occupied = snappedRects.slice();
-
-        pieces.forEach(x => {
-            if (x === snappedPiece) return;
-            if (x.classList.contains('snapped') || x.classList.contains('snapping')) return;
-
-            const xr = rectOf(x);
-            if (overlaps(xr, pr)) {
-                const spot = findFreeSpot(occupied);
-                x.style.left = spot.left + 'px';
-                x.style.top  = spot.top  + 'px';
-                occupied.push({ left: spot.left, top: spot.top,
-                                right: spot.left + pieceW, bottom: spot.top + pieceH });
-            }
-        });
-    }
-
+    /* ---- Раскладка ---- */
     function setupBoard(img) {
         const maxW = Math.min(window.innerWidth  * 0.85, 460);
         const maxH = Math.min(window.innerHeight * 0.60, 520);
@@ -1787,23 +1743,66 @@
             }
         }
 
+        const bwMax = Math.max(1, boardW - pieceW);
+        const bhMax = Math.max(1, boardH - pieceH);
+
+        // Раскладка — стараемся, чтобы каждый кусок был существенно виден
+        const placedRects = [];
         const starts = [];
         for (let i = 0; i < total; i++) {
-            let pos, tries = 0;
-            do {
-                pos = {
-                    left: Math.random() * Math.max(1, boardW - pieceW),
-                    top:  Math.random() * Math.max(1, boardH - pieceH)
-                };
-                tries++;
-                const dx = pos.left - targets[i].left;
-                const dy = pos.top  - targets[i].top;
-                if (Math.abs(dx) > SNAP_TOLERANCE * 2 ||
-                    Math.abs(dy) > SNAP_TOLERANCE * 2) break;
-            } while (tries < 30);
-            starts.push(pos);
+            const t = targets[i];
+            let best = null, bestVis = -1;
+
+            for (let attempt = 0; attempt < 100; attempt++) {
+                const l = Math.random() * bwMax;
+                const tp = Math.random() * bhMax;
+                const dx = l - t.left;
+                const dy = tp - t.top;
+                // не на своём целевом месте
+                if (Math.abs(dx) < SNAP_TOLERANCE * 2 && Math.abs(dy) < SNAP_TOLERANCE * 2) continue;
+
+                const r = { left: l, top: tp, right: l + pieceW, bottom: tp + pieceH };
+                const vis = visibleFraction(r, placedRects);
+
+                if (vis >= MIN_VISIBLE_START) { best = { left: l, top: tp }; bestVis = vis; break; }
+                if (vis > bestVis) { bestVis = vis; best = { left: l, top: tp }; }
+            }
+
+            if (!best) best = { left: Math.random() * bwMax, top: Math.random() * bhMax };
+            placedRects.push({ left: best.left, top: best.top, right: best.left + pieceW, bottom: best.top + pieceH });
+            starts.push(best);
         }
 
+        // Финальный проход: если кусок слишком перекрыт — "выдвигаем" его,
+        // чтобы торчал видимый край и его можно было ухватить.
+        for (let i = 0; i < total; i++) {
+            const t = targets[i];
+            const pi = placedRects[i];
+            const others = placedRects.filter((_, j) => j !== i);
+            let vis = visibleFraction(pi, others);
+            let attempts = 0;
+
+            while (vis < MIN_VISIBLE_START - 0.15 && attempts < 50) {
+                const dx = (Math.random() - 0.5) * pieceW * 0.8;
+                const dy = (Math.random() - 0.5) * pieceH * 0.8;
+                const nl = Math.max(0, Math.min(bwMax, pi.left + dx));
+                const nt = Math.max(0, Math.min(bhMax, pi.top + dy));
+                if (Math.abs(nl - t.left) < SNAP_TOLERANCE && Math.abs(nt - t.top) < SNAP_TOLERANCE) {
+                    attempts++;
+                    continue;
+                }
+                const nr = { left: nl, top: nt, right: nl + pieceW, bottom: nt + pieceH };
+                const nv = visibleFraction(nr, others);
+                if (nv > vis) {
+                    pi.left = nl; pi.top = nt; pi.right = nl + pieceW; pi.bottom = nt + pieceH;
+                    starts[i] = { left: nl, top: nt };
+                    vis = nv;
+                }
+                attempts++;
+            }
+        }
+
+        // Создаём куски
         for (let i = 0; i < total; i++) {
             const t = targets[i];
             const s = starts[i];
@@ -1835,6 +1834,7 @@
         startAutoTimer();
     }
 
+    /* ---- Перетаскивание ---- */
     function onPointerDown(e) {
         if (finished) return;
         const p = e.currentTarget;
@@ -1868,6 +1868,7 @@
         dragging.style.left = nl + 'px';
         dragging.style.top  = nt + 'px';
 
+        // подсказка-рамка у цели
         const tl = parseFloat(dragging.dataset.targetLeft) || 0;
         const tt = parseFloat(dragging.dataset.targetTop)  || 0;
         const ddx = nl - tl;
@@ -1907,6 +1908,90 @@
             p.style.zIndex = '';
             ensurePieceAccessible(p);
         }
+    }
+
+    /* После броска: если брошенный кусок накрыл другие — чуть выдвигаем их,
+       чтобы торчал видимый край. Если сам брошенный ушёл под собранный — его
+       перекладываем в свободное место. */
+    function ensurePieceAccessible(piece) {
+        if (piece.classList.contains('snapped') || piece.classList.contains('snapping')) return;
+
+        const pr = rectOf(piece);
+        const snappedRects = pieces
+            .filter(x => x.classList.contains('snapped') || x.classList.contains('snapping'))
+            .map(rectOf);
+
+        if (snappedRects.some(o => overlaps(pr, o))) {
+            const spot = findFreeSpot(snappedRects);
+            piece.style.left = spot.left + 'px';
+            piece.style.top  = spot.top  + 'px';
+            return;
+        }
+
+        pieces.forEach(x => {
+            if (x === piece) return;
+            if (x.classList.contains('snapped') || x.classList.contains('snapping')) return;
+
+            const xr = rectOf(x);
+            if (!overlaps(xr, pr)) return;
+
+            const coverRects = snappedRects.concat([pr]);
+            const vis = visibleFraction(xr, coverRects);
+            if (vis < MIN_VISIBLE_KEEP) {
+                nudgeToExpose(x, coverRects);
+            }
+        });
+    }
+
+    function nudgeToExpose(piece, coverRects) {
+        const bwMax = Math.max(1, board.clientWidth  - pieceW);
+        const bhMax = Math.max(1, board.clientHeight - pieceH);
+        const tl = parseFloat(piece.dataset.targetLeft) || 0;
+        const tt = parseFloat(piece.dataset.targetTop)  || 0;
+
+        let cur = rectOf(piece);
+        let curVis = visibleFraction(cur, coverRects);
+
+        for (let attempt = 0; attempt < 50; attempt++) {
+            const dx = (Math.random() - 0.5) * pieceW * 0.9;
+            const dy = (Math.random() - 0.5) * pieceH * 0.9;
+            const nl = Math.max(0, Math.min(bwMax, cur.left + dx));
+            const nt = Math.max(0, Math.min(bhMax, cur.top + dy));
+            if (Math.abs(nl - tl) < SNAP_TOLERANCE && Math.abs(nt - tt) < SNAP_TOLERANCE) continue;
+            const nr = { left: nl, top: nt, right: nl + pieceW, bottom: nt + pieceH };
+            const nv = visibleFraction(nr, coverRects);
+            if (nv > curVis) {
+                cur = nr;
+                curVis = nv;
+                if (nv >= MIN_VISIBLE_START) break;
+            }
+        }
+
+        piece.style.left = cur.left + 'px';
+        piece.style.top  = cur.top  + 'px';
+    }
+
+    /* После снапа: если под собранной клеткой был кусок — выселяем */
+    function evacuateUnderSnapped(snappedPiece) {
+        const pr = rectOf(snappedPiece);
+        const snappedRects = pieces
+            .filter(x => x.classList.contains('snapped') || x.classList.contains('snapping'))
+            .map(rectOf);
+        const occupied = snappedRects.slice();
+
+        pieces.forEach(x => {
+            if (x === snappedPiece) return;
+            if (x.classList.contains('snapped') || x.classList.contains('snapping')) return;
+
+            const xr = rectOf(x);
+            if (overlaps(xr, pr)) {
+                const spot = findFreeSpot(occupied);
+                x.style.left = spot.left + 'px';
+                x.style.top  = spot.top  + 'px';
+                occupied.push({ left: spot.left, top: spot.top,
+                                right: spot.left + pieceW, bottom: spot.top + pieceH });
+            }
+        });
     }
 
     function snapPiece(p) {
