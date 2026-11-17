@@ -80,7 +80,9 @@
         body { animation: none; opacity: 1; }
     }
 
-    /* ПАЗЛ */
+    /* ============================================
+       ПАЗЛ
+    ============================================ */
     #puzzle-screen {
         position: fixed;
         inset: 0;
@@ -134,6 +136,26 @@
         margin: 0 auto;
         box-shadow: 0 8px 40px rgba(0, 0, 0, 0.05);
     }
+
+    /* Призрачное фото на поле */
+    #puzzle-board::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: var(--ghost, none);
+        background-size: 100% 100%;
+        background-position: center;
+        opacity: 0.15;
+        pointer-events: none;
+        z-index: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Во время перетаскивания — призрак ярче */
+    #puzzle-board.dragging-active::before {
+        opacity: 0.32;
+    }
+
     .piece {
         position: absolute;
         background-size: cover;
@@ -141,13 +163,25 @@
         cursor: grab;
         transition: opacity 0.4s ease, box-shadow 0.3s ease, filter 0.4s ease;
         will-change: transform, left, top;
-        opacity: 0.75;
+        opacity: 0.82;
         outline: 1px solid rgba(255, 255, 255, 0.6);
         outline-offset: -1px;
         border-radius: 2px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         z-index: 1;
     }
+
+    .snap-hint {
+        position: absolute;
+        border: 2px dashed var(--olive);
+        border-radius: 3px;
+        background: rgba(93, 122, 90, 0.12);
+        pointer-events: none;
+        z-index: 40;
+        display: none;
+        box-sizing: border-box;
+    }
+
     .piece.snapping {
         transition:
             left 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -158,9 +192,9 @@
     .piece:active { cursor: grabbing; }
     .piece.dragging {
         z-index: 999;
-        opacity: 0.9;
+        opacity: 0.95;
         box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
-        filter: brightness(1.02);
+        filter: brightness(1.04);
     }
     .piece.snapped {
         cursor: default;
@@ -1220,7 +1254,7 @@
 
     <div id="puzzle-screen">
         <div class="puzzle-title">Вы получили приглашение</div>
-        <div class="puzzle-hint">Чтобы открыть его — соберите пазл</div>
+        <div class="puzzle-hint">Соберите пазл — и откроется приглашение</div>
         <div id="puzzle-board"></div>
         <div class="puzzle-progress" id="progress">0 / 12</div>
     </div>
@@ -1563,7 +1597,7 @@
     const IMAGE_SRC      = '2026-11-14 14.11.37.jpg';
     const COLS           = 4;
     const ROWS           = 3;
-    const SNAP_TOLERANCE = 18;
+    const SNAP_TOLERANCE = 22;
     const AUTO_FINISH_SEC = 45;
 
     const board    = document.getElementById('puzzle-board');
@@ -1574,6 +1608,7 @@
     let pieces = [];
     let placedCount = 0;
     let dragging = null;
+    let snapHint = null;
     let startX = 0, startY = 0, startLeft = 0, startTop = 0;
     let finished = false;
     let autoTimer = null;
@@ -1621,7 +1656,6 @@
         img.src = c.toDataURL();
     }
 
-    /* ---- Геометрия ---- */
     function rectOf(p) {
         let l, t;
         if (p.classList.contains('snapped') || p.classList.contains('snapping')) {
@@ -1639,7 +1673,6 @@
                  a.bottom <= b.top || a.top >= b.bottom);
     }
 
-    /* Поиск свободного места: сначала 200 случайных попыток, затем сетка */
     function findFreeSpot(occupied) {
         const bw = Math.max(1, board.clientWidth  - pieceW);
         const bh = Math.max(1, board.clientHeight - pieceH);
@@ -1669,8 +1702,6 @@
         return best || { left: 0, top: 0 };
     }
 
-    /* Если после броска кусок оказался под собранным — двигаем его.
-       Иначе: если брошенный кусок накрыл другой несобранный — двигаем накрытый. */
     function ensurePieceAccessible(piece) {
         if (piece.classList.contains('snapped') || piece.classList.contains('snapping')) return;
 
@@ -1679,7 +1710,6 @@
             .filter(x => x.classList.contains('snapped') || x.classList.contains('snapping'))
             .map(rectOf);
 
-        // Case 1: брошенный кусок попал под собранный — двигаем его самого
         if (snappedRects.some(o => overlaps(pr, o))) {
             const spot = findFreeSpot(snappedRects);
             piece.style.left = spot.left + 'px';
@@ -1687,7 +1717,6 @@
             return;
         }
 
-        // Case 2: брошенный кусок накрывает другие несобранные — двигаем их
         const occupied = snappedRects.concat([pr]);
         pieces.forEach(x => {
             if (x === piece) return;
@@ -1704,7 +1733,6 @@
         });
     }
 
-    /* После снапа: если под собранной клеткой был кусок — выселяем его */
     function evacuateUnderSnapped(snappedPiece) {
         const pr = rectOf(snappedPiece);
         const snappedRects = pieces
@@ -1748,6 +1776,8 @@
         board.style.height = boardH + 'px';
 
         const bgUrl = "url('" + img.src + "')";
+        board.style.setProperty('--ghost', bgUrl);
+
         const total = COLS * ROWS;
 
         const targets = [];
@@ -1757,7 +1787,6 @@
             }
         }
 
-        // Оригинальный случайный разброс (без принудительного избегания наложений)
         const starts = [];
         for (let i = 0; i < total; i++) {
             let pos, tries = 0;
@@ -1794,6 +1823,10 @@
             board.appendChild(p);
         }
 
+        snapHint = document.createElement('div');
+        snapHint.className = 'snap-hint';
+        board.appendChild(snapHint);
+
         document.addEventListener('pointermove', onPointerMove, { passive: false });
         document.addEventListener('pointerup',   onPointerUp);
         document.addEventListener('pointercancel', onPointerUp);
@@ -1808,6 +1841,8 @@
         if (p.classList.contains('snapped') || p.classList.contains('snapping')) return;
 
         e.preventDefault();
+        board.classList.add('dragging-active');
+
         dragging  = p;
         p.classList.add('dragging');
         p.style.zIndex = 999;
@@ -1832,9 +1867,27 @@
         nt = Math.max(0, Math.min(board.clientHeight - pieceH, nt));
         dragging.style.left = nl + 'px';
         dragging.style.top  = nt + 'px';
+
+        const tl = parseFloat(dragging.dataset.targetLeft) || 0;
+        const tt = parseFloat(dragging.dataset.targetTop)  || 0;
+        const ddx = nl - tl;
+        const ddy = nt - tt;
+        const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (dist < SNAP_TOLERANCE * 2) {
+            snapHint.style.left   = tl + 'px';
+            snapHint.style.top    = tt + 'px';
+            snapHint.style.width  = pieceW + 'px';
+            snapHint.style.height = pieceH + 'px';
+            snapHint.style.display = 'block';
+        } else {
+            snapHint.style.display = 'none';
+        }
     }
 
     function onPointerUp(e) {
+        board.classList.remove('dragging-active');
+        if (snapHint) snapHint.style.display = 'none';
+
         if (!dragging) return;
         const p = dragging;
         dragging = null;
@@ -1873,7 +1926,6 @@
             placedCount++;
             updateProgress();
 
-            // выселяем всё, что было под этой клеткой
             evacuateUnderSnapped(p);
 
             if (placedCount === pieces.length) finishPuzzle();
