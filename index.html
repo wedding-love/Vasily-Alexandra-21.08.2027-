@@ -102,24 +102,24 @@
 
     .puzzle-title {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(12px, 3vw, 16px);
+        font-size: clamp(17px, 4.5vw, 24px);
         font-weight: 500;
-        letter-spacing: 0.3em;
+        letter-spacing: 0.28em;
         text-transform: uppercase;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         color: var(--brown);
         text-align: center;
     }
     .puzzle-hint {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(11px, 2.4vw, 14px);
+        font-size: clamp(14px, 3vw, 18px);
         font-weight: 300;
         color: var(--brown-soft);
-        margin-bottom: clamp(18px, 4vw, 28px);
+        margin-bottom: clamp(20px, 4.5vw, 32px);
         text-align: center;
-        letter-spacing: 0.05em;
-        max-width: 340px;
-        line-height: 1.6;
+        letter-spacing: 0.04em;
+        max-width: 380px;
+        line-height: 1.65;
         padding: 0 8px;
     }
     #puzzle-board {
@@ -210,9 +210,9 @@
         100% { box-shadow: 0 0 0 22px rgba(0, 0, 0, 0); }
     }
     .puzzle-progress {
-        margin-top: clamp(14px, 3vw, 20px);
+        margin-top: clamp(16px, 3.2vw, 22px);
         font-family: 'Manrope', sans-serif;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 400;
         letter-spacing: 0.3em;
         color: var(--brown-soft);
@@ -226,9 +226,9 @@
         100% { box-shadow: 0 0 50px 16px rgba(0, 0, 0, 0); }
     }
     @media (max-width: 480px) {
-        .puzzle-title { font-size: 11px; letter-spacing: 0.24em; }
-        .puzzle-hint  { font-size: 11px; margin-bottom: 16px; }
-        .puzzle-progress { font-size: 10px; margin-top: 12px; }
+        .puzzle-title { font-size: 15px; letter-spacing: 0.2em; }
+        .puzzle-hint  { font-size: 13px; margin-bottom: 18px; max-width: 300px; }
+        .puzzle-progress { font-size: 12px; margin-top: 14px; }
     }
 
     /* HERO */
@@ -1522,8 +1522,8 @@
                             <span class="rsvp__mark"></span><span class="rsvp__option-text">Шампанское</span>
                         </label>
                         <label class="rsvp__option rsvp__option--checkbox">
-                            <input type="checkbox" name="drink" value="Белое вино">
-                            <span class="rsvp__mark"></span><span class="rsvp__option-text">Белое вино</span>
+                            <input type="checkbox" name="drink" value="Белое вино (сухое)">
+                            <span class="rsvp__mark"></span><span class="rsvp__option-text">Белое вино (сухое)</span>
                         </label>
                         <label class="rsvp__option rsvp__option--checkbox">
                             <input type="checkbox" name="drink" value="Красное вино">
