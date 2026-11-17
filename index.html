@@ -112,15 +112,15 @@
     }
     .puzzle-hint {
         font-family: 'Manrope', sans-serif;
-        font-size: clamp(14px, 3vw, 18px);
+        font-size: clamp(11px, 3.2vw, 16px);
         font-weight: 300;
         color: var(--brown-soft);
         margin-bottom: clamp(20px, 4.5vw, 32px);
         text-align: center;
-        letter-spacing: 0.04em;
-        max-width: 380px;
-        line-height: 1.65;
-        padding: 0 8px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        line-height: 1.6;
+        padding: 0;
     }
     #puzzle-board {
         position: relative;
@@ -227,7 +227,6 @@
     }
     @media (max-width: 480px) {
         .puzzle-title { font-size: 15px; letter-spacing: 0.2em; }
-        .puzzle-hint  { font-size: 13px; margin-bottom: 18px; max-width: 300px; }
         .puzzle-progress { font-size: 12px; margin-top: 14px; }
     }
 
@@ -1470,10 +1469,9 @@
                     <h3 class="gifts__card-title">Цветы — да, но…</h3>
                     <p class="gifts__card-text">
                         Мы очень любим цветы, но, к сожалению, они быстро
-                        завянут. Если вам хочется подарить букет, замените его,
-                        пожалуйста, на карту «Золотое яблоко» на сумму букета
-                        или на бутылку алкоголя, которую мы с удовольствием
-                        откроем на празднике.
+                        завянут. Если вам хочется подарить букет, будем рады
+                        подарочной карте на сумму букета — на выбор:
+                        «Золотое яблоко», Ozon, Wildberries или Яндекс.
                     </p>
                 </div>
             </div>
@@ -2169,3 +2167,4 @@
 </script>
 </body>
 </html>
+
