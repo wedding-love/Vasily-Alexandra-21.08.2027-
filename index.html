@@ -236,54 +236,6 @@
     .contacts__phone { font-family: 'Manrope', sans-serif; font-size: clamp(10px, 1.6vw, 17px); font-weight: 300; color: var(--brown-mid); text-decoration: none; transition: color 0.3s ease; white-space: nowrap; }
     .contacts__phone:hover { color: var(--brown); }
 
-    /* POPUP STYLES */
-    .rsvp-popup-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(92, 61, 46, 0.6); /* Olive-brown tint */
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.4s ease, visibility 0.4s ease;
-        padding: 20px;
-    }
-    .rsvp-popup-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-    .rsvp-popup-content {
-        background: #ffffff;
-        padding: clamp(30px, 5vw, 50px);
-        border-radius: 8px;
-        text-align: center;
-        max-width: 400px;
-        width: 100%;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        transform: scale(0.9);
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .rsvp-popup-overlay.active .rsvp-popup-content {
-        transform: scale(1);
-    }
-    .rsvp-popup-title {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(24px, 5vw, 32px);
-        font-style: italic;
-        color: var(--brown);
-        margin-bottom: 16px;
-    }
-    .rsvp-popup-text {
-        font-family: 'Manrope', sans-serif;
-        font-size: 16px;
-        color: var(--brown-mid);
-        line-height: 1.6;
-    }
-
     /* АДАПТИВ */
     @media (max-width: 700px) { .dresscode__cards, .gifts__cards { grid-template-columns: 1fr; } .dresscode__card, .gifts__card { text-align: center; } }
     @media (max-width: 480px) { .hero__date { font-size: 11px; } .invitation__greeting { font-size: clamp(22px, 7vw, 34px); } .timeline__item { grid-template-columns: 56px 1fr; gap: 14px; } .countdown__row { gap: 6px; } .countdown__sep { height: 22px; } .contacts__list { gap: 4px; } .contacts__phone { font-size: 10px; } }
@@ -475,6 +427,11 @@
 
                 <button type="submit" class="rsvp__submit pageclip-form__submit"><span>Отправить ответ</span></button>
             </form>
+
+            <!-- Блок сообщения об успехе (скрыт по умолчанию) -->
+            <div id="rsvp-success-msg" style="display: none; text-align: center; margin-top: 30px; font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; color: #ffffff;">
+                Ваш ответ отправлен, спасибо!
+            </div>
         </div>
     </section>
 
@@ -489,14 +446,6 @@
             </div>
         </div>
     </section>
-
-    <!-- POPUP MESSAGE -->
-    <div id="rsvp-popup" class="rsvp-popup-overlay">
-        <div class="rsvp-popup-content">
-            <h3 class="rsvp-popup-title">Спасибо!</h3>
-            <p class="rsvp-popup-text">Ваш ответ принят, спасибо! Ждем вас.</p>
-        </div>
-    </div>
 
 <!-- STEP 1: Pageclip Script -->
 <script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
@@ -777,25 +726,24 @@
     })();
 
     /* ============================================================
-       RSVP Success Handling (Popup)
+       RSVP Success Handling (Custom Message)
     ============================================================ */
     (function initRsvpSuccess() {
         const form = document.getElementById('rsvp-form');
-        const popup = document.getElementById('rsvp-popup');
+        const successMsg = document.getElementById('rsvp-success-msg');
         
-        if (form && popup) {
+        if (form && successMsg) {
             // Слушаем событие успеха от Pageclip
             form.addEventListener('pageclip:success', function() {
-                popup.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Блокируем скролл фона
+                // Скрываем форму
+                form.style.display = 'none';
+                // Показываем наше сообщение
+                successMsg.style.display = 'block';
             });
             
-            // Опционально: закрыть попап при клике на фон (если нужно)
-            popup.addEventListener('click', function(e) {
-                if (e.target === popup) {
-                    popup.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
+            // Опционально: обработка ошибок
+            form.addEventListener('pageclip:error', function() {
+                alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
             });
         }
     })();
