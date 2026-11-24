@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 
-<!-- STEP 2: Pageclip Stylesheet -->
 <link rel="stylesheet" href="https://s.pageclip.co/v1/pageclip.css" media="screen">
 
 <style>
@@ -182,7 +181,6 @@
     .rsvp__title { font-family: 'Playfair Display', serif; font-size: clamp(26px, 5.5vw, 56px); font-weight: 400; font-style: italic; color: #ffffff; text-align: center; line-height: 1.3; margin-bottom: clamp(16px, 3vw, 28px); }
     .rsvp__text { font-family: 'Manrope', sans-serif; font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; line-height: 1.85; color: rgba(255, 255, 255, 0.82); text-align: center; max-width: 460px; margin: 0 auto clamp(32px, 7vw, 72px); }
     
-    /* Стили полей внутри формы — теперь по ID, а не по классу pageclip-form */
     #rsvp-form { text-align: left; }
     #rsvp-form input, #rsvp-form textarea {
         width: 100%; background: transparent; border: none;
@@ -221,6 +219,56 @@
     .rsvp__submit:active { transform: scale(0.99); }
     .rsvp__submit:disabled { opacity: 0.6; cursor: default; }
     .rsvp__submit span { position: relative; z-index: 1; }
+
+    /* ============================================================
+       УБИРАЕМ ВСЕ АРТЕФАКТЫ PAGECLIP (белый фон, оверлей, модалка)
+    ============================================================ */
+    .pageclip-overlay,
+    .pageclip-thankyou,
+    .pageclip-form--success,
+    .pageclip-form__success,
+    div[data-pageclip-target="thankyou"],
+    div[data-pageclip-target="overlay"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        position: static !important;
+    }
+
+    /* ============================================================
+       КАСТОМНОЕ СООБЩЕНИЕ ОБ УСПЕХЕ — вне формы, на оливковом фоне
+    ============================================================ */
+    #rsvp-success {
+        display: none;
+        text-align: center;
+        padding: clamp(40px, 8vw, 80px) 0;
+    }
+    #rsvp-success.is-visible { display: block; }
+    #rsvp-success h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 400;
+        font-style: italic;
+        font-size: clamp(26px, 5.5vw, 56px);
+        line-height: 1.3;
+        margin: 0 0 16px;
+        color: #ffffff;
+    }
+    #rsvp-success p {
+        font-family: 'Manrope', sans-serif;
+        font-weight: 300;
+        font-size: clamp(13px, 1.8vw, 16px);
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.85);
+        margin: 0;
+    }
 
     /* КОНТАКТЫ */
     .contacts { background: var(--cream); padding: clamp(56px, 10vw, 130px) max(clamp(16px, 4vw, 48px), env(safe-area-inset-right)) max(clamp(56px, 10vw, 130px), env(safe-area-inset-bottom)) max(clamp(16px, 4vw, 48px), env(safe-area-inset-left)); text-align: center; }
@@ -381,7 +429,7 @@
             <h2 class="rsvp__title reveal reveal--delay-1">Будете ли вы с нами?</h2>
             <p class="rsvp__text reveal reveal--delay-1">Пожалуйста, ответьте до 25 июля 2027 года — так мы сможем позаботиться о каждом госте.</p>
             
-            <!-- STEP 3: Pageclip Form. Без класса pageclip-form — инициализируем вручную. -->
+            <!-- Форма. Класса pageclip-form НЕТ — инициализируем вручную. -->
             <form action="https://send.pageclip.co/4YWqIzkbioNeI9D9uxz8BO6UG1GPJa9e/Answers"
                   class="reveal reveal--delay-2"
                   method="post"
@@ -411,7 +459,6 @@
                 <div class="rsvp__field">
                     <span class="rsvp__label" style="display:block; font-family:'Manrope'; font-size:11px; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-bottom:14px;">Предпочтения по напиткам</span>
                     <div class="rsvp__options">
-                        <!-- Bracket-нотация: каждое имя уникально → сохраняются ВСЕ отмеченные -->
                         <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Шампанское]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Шампанское</span></label>
                         <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Белое вино (сухое)]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Белое вино (сухое)</span></label>
                         <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Красное вино (полусладкое)]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Красное вино (полусладкое)</span></label>
@@ -426,8 +473,14 @@
                     <textarea id="rsvp-comment" name="comment" placeholder="Аллергии, пожелания, особенности"></textarea>
                 </div>
 
-                <button type="submit" class="rsvp__submit pageclip-form__submit"><span>Отправить ответ</span></button>
+                <button type="submit" class="rsvp__submit"><span>Отправить ответ</span></button>
             </form>
+
+            <!-- ✅ Кастомное сообщение об успехе. Вне формы. Показываем через JS. -->
+            <div id="rsvp-success">
+                <h3>Спасибо!</h3>
+                <p>Ваш ответ принят. Мы вас ждём!</p>
+            </div>
         </div>
     </section>
 
@@ -443,7 +496,6 @@
         </div>
     </section>
 
-<!-- STEP 1: Pageclip Script -->
 <script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
 
 <script>
@@ -722,38 +774,59 @@
     })();
 
     /* ============================================================
-       RSVP — ручная инициализация Pageclip с кастомным "Спасибо"
+       RSVP — своя логика: форма прячется, показываем только текст
     ============================================================ */
     (function initRsvpForm() {
         const form = document.getElementById('rsvp-form');
+        const successEl = document.getElementById('rsvp-success');
         if (!form) return;
 
         if (typeof Pageclip === 'undefined' || typeof Pageclip.form !== 'function') {
-            console.error('[Pageclip] Библиотека не загружена — проверьте блокировщик или соединение');
+            console.error('[Pageclip] Библиотека не загружена');
             return;
         }
 
-        // Шаблон сообщения об успехе (в стиле оливковой секции)
-        const successHTML =
-            '<div style="text-align:center; padding:40px 0;">' +
-                '<h3 style="font-family:\'Playfair Display\', Georgia, serif; font-weight:400; font-style:italic; font-size:clamp(26px,5.5vw,56px); color:#ffffff; margin:0 0 16px; line-height:1.3;">Спасибо!</h3>' +
-                '<p style="font-family:\'Manrope\', sans-serif; font-weight:300; font-size:clamp(13px,1.8vw,16px); color:rgba(255,255,255,0.85); margin:0; line-height:1.8;">Ваш ответ принят. Мы вас ждём!</p>' +
-            '</div>';
+        // Функция очистки артефактов Pageclip
+        function purgePageclipArtifacts() {
+            document.querySelectorAll(
+                '.pageclip-overlay, .pageclip-thankyou, .pageclip-form--success, .pageclip-form__success'
+            ).forEach(function (el) {
+                el.style.display = 'none';
+                el.style.visibility = 'hidden';
+                // Удаляем из DOM полностью через 50мс
+                setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 50);
+            });
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        }
 
         try {
             Pageclip.form(form, {
-                successTemplate: successHTML,
                 onSubmit: function () {
                     const btn = form.querySelector('button[type="submit"]');
                     if (btn) btn.disabled = true;
                 },
                 onResponse: function (error) {
                     if (error) {
-                        console.error('[Pageclip]', error);
+                        console.error('[Pageclip] Ошибка:', error);
                         const btn = form.querySelector('button[type="submit"]');
                         if (btn) btn.disabled = false;
                         alert('Не удалось отправить. Попробуйте ещё раз или напишите нам в Telegram.');
+                        return;
                     }
+
+                    // ✅ УСПЕХ: скрываем форму полностью, показываем свой текст
+                    form.style.display = 'none';
+                    form.setAttribute('hidden', '');
+
+                    if (successEl) {
+                        successEl.classList.add('is-visible');
+                        successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    // Убираем возможные следы Pageclip сразу и через 100мс
+                    purgePageclipArtifacts();
+                    setTimeout(purgePageclipArtifacts, 100);
                 }
             });
             console.log('[Pageclip] RSVP-форма инициализирована');
