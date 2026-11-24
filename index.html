@@ -42,7 +42,6 @@
     }
     @keyframes fadeIn { to { opacity: 1; } }
 
-    /* Анимации появления */
     .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
     .reveal--delay-1 { transition-delay: 0.1s; }
@@ -183,9 +182,9 @@
     .rsvp__title { font-family: 'Playfair Display', serif; font-size: clamp(26px, 5.5vw, 56px); font-weight: 400; font-style: italic; color: #ffffff; text-align: center; line-height: 1.3; margin-bottom: clamp(16px, 3vw, 28px); }
     .rsvp__text { font-family: 'Manrope', sans-serif; font-size: clamp(12px, 1.6vw, 15px); font-weight: 300; line-height: 1.85; color: rgba(255, 255, 255, 0.82); text-align: center; max-width: 460px; margin: 0 auto clamp(32px, 7vw, 72px); }
     
-    /* Стили полей внутри формы Pageclip */
-    .pageclip-form { text-align: left; }
-    .pageclip-form input, .pageclip-form textarea {
+    /* Стили полей внутри формы — теперь по ID, а не по классу pageclip-form */
+    #rsvp-form { text-align: left; }
+    #rsvp-form input, #rsvp-form textarea {
         width: 100%; background: transparent; border: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.35);
         color: #ffffff; font-family: 'Manrope', sans-serif;
@@ -193,11 +192,10 @@
         padding: 12px 0; outline: none; transition: border-color 0.3s ease;
         border-radius: 0; margin-bottom: 24px;
     }
-    .pageclip-form input::placeholder, .pageclip-form textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
-    .pageclip-form input:focus, .pageclip-form textarea:focus { border-bottom-color: #ffffff; }
-    .pageclip-form textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+    #rsvp-form input::placeholder, #rsvp-form textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
+    #rsvp-form input:focus, #rsvp-form textarea:focus { border-bottom-color: #ffffff; }
+    #rsvp-form textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
     
-    /* Кастомные чекбоксы/радио */
     .rsvp__options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
     .rsvp__option { display: flex; align-items: center; gap: 12px; cursor: pointer; font-family: 'Manrope', sans-serif; font-size: clamp(13px, 1.7vw, 15px); font-weight: 300; color: rgba(255, 255, 255, 0.9); position: relative; padding: 4px 0; }
     .rsvp__option:hover { color: #ffffff; }
@@ -236,7 +234,6 @@
     .contacts__phone { font-family: 'Manrope', sans-serif; font-size: clamp(10px, 1.6vw, 17px); font-weight: 300; color: var(--brown-mid); text-decoration: none; transition: color 0.3s ease; white-space: nowrap; }
     .contacts__phone:hover { color: var(--brown); }
 
-    /* АДАПТИВ */
     @media (max-width: 700px) { .dresscode__cards, .gifts__cards { grid-template-columns: 1fr; } .dresscode__card, .gifts__card { text-align: center; } }
     @media (max-width: 480px) { .hero__date { font-size: 11px; } .invitation__greeting { font-size: clamp(22px, 7vw, 34px); } .timeline__item { grid-template-columns: 56px 1fr; gap: 14px; } .countdown__row { gap: 6px; } .countdown__sep { height: 22px; } .contacts__list { gap: 4px; } .contacts__phone { font-size: 10px; } }
 </style>
@@ -384,8 +381,11 @@
             <h2 class="rsvp__title reveal reveal--delay-1">Будете ли вы с нами?</h2>
             <p class="rsvp__text reveal reveal--delay-1">Пожалуйста, ответьте до 25 июля 2027 года — так мы сможем позаботиться о каждом госте.</p>
             
-            <!-- STEP 3: Pageclip Form -->
-            <form action="https://send.pageclip.co/4YWqIzkbioNeI9D9uxz8BO6UG1GPJa9e/Answers" class="pageclip-form reveal reveal--delay-2" method="post" id="rsvp-form">
+            <!-- STEP 3: Pageclip Form. Без класса pageclip-form — инициализируем вручную. -->
+            <form action="https://send.pageclip.co/4YWqIzkbioNeI9D9uxz8BO6UG1GPJa9e/Answers"
+                  class="reveal reveal--delay-2"
+                  method="post"
+                  id="rsvp-form">
                 
                 <div class="rsvp__field">
                     <label class="rsvp__label" for="rsvp-name" style="display:block; font-family:'Manrope'; font-size:11px; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-bottom:14px;">Имя и фамилия</label>
@@ -411,12 +411,13 @@
                 <div class="rsvp__field">
                     <span class="rsvp__label" style="display:block; font-family:'Manrope'; font-size:11px; letter-spacing:0.35em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-bottom:14px;">Предпочтения по напиткам</span>
                     <div class="rsvp__options">
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Шампанское"><span class="rsvp__mark"></span><span class="rsvp__option-text">Шампанское</span></label>
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Белое вино (сухое)"><span class="rsvp__mark"></span><span class="rsvp__option-text">Белое вино (сухое)</span></label>
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Красное вино (полусладкое)"><span class="rsvp__mark"></span><span class="rsvp__option-text">Красное вино (полусладкое)</span></label>
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Водка"><span class="rsvp__mark"></span><span class="rsvp__option-text">Водка</span></label>
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Виски"><span class="rsvp__mark"></span><span class="rsvp__option-text">Виски</span></label>
-                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink" value="Безалкогольные"><span class="rsvp__mark"></span><span class="rsvp__option-text">Безалкогольные</span></label>
+                        <!-- Bracket-нотация: каждое имя уникально → сохраняются ВСЕ отмеченные -->
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Шампанское]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Шампанское</span></label>
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Белое вино (сухое)]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Белое вино (сухое)</span></label>
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Красное вино (полусладкое)]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Красное вино (полусладкое)</span></label>
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Водка]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Водка</span></label>
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Виски]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Виски</span></label>
+                        <label class="rsvp__option rsvp__option--checkbox"><input type="checkbox" name="drink[Безалкогольные]" value="Да"><span class="rsvp__mark"></span><span class="rsvp__option-text">Безалкогольные</span></label>
                     </div>
                 </div>
 
@@ -427,11 +428,6 @@
 
                 <button type="submit" class="rsvp__submit pageclip-form__submit"><span>Отправить ответ</span></button>
             </form>
-
-            <!-- Блок сообщения об успехе (скрыт по умолчанию) -->
-            <div id="rsvp-success-msg" style="display: none; text-align: center; margin-top: 30px; font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; color: #ffffff;">
-                Ваш ответ отправлен, спасибо!
-            </div>
         </div>
     </section>
 
@@ -726,25 +722,43 @@
     })();
 
     /* ============================================================
-       RSVP Success Handling (Custom Message)
+       RSVP — ручная инициализация Pageclip с кастомным "Спасибо"
     ============================================================ */
-    (function initRsvpSuccess() {
+    (function initRsvpForm() {
         const form = document.getElementById('rsvp-form');
-        const successMsg = document.getElementById('rsvp-success-msg');
-        
-        if (form && successMsg) {
-            // Слушаем событие успеха от Pageclip
-            form.addEventListener('pageclip:success', function() {
-                // Скрываем форму
-                form.style.display = 'none';
-                // Показываем наше сообщение
-                successMsg.style.display = 'block';
+        if (!form) return;
+
+        if (typeof Pageclip === 'undefined' || typeof Pageclip.form !== 'function') {
+            console.error('[Pageclip] Библиотека не загружена — проверьте блокировщик или соединение');
+            return;
+        }
+
+        // Шаблон сообщения об успехе (в стиле оливковой секции)
+        const successHTML =
+            '<div style="text-align:center; padding:40px 0;">' +
+                '<h3 style="font-family:\'Playfair Display\', Georgia, serif; font-weight:400; font-style:italic; font-size:clamp(26px,5.5vw,56px); color:#ffffff; margin:0 0 16px; line-height:1.3;">Спасибо!</h3>' +
+                '<p style="font-family:\'Manrope\', sans-serif; font-weight:300; font-size:clamp(13px,1.8vw,16px); color:rgba(255,255,255,0.85); margin:0; line-height:1.8;">Ваш ответ принят. Мы вас ждём!</p>' +
+            '</div>';
+
+        try {
+            Pageclip.form(form, {
+                successTemplate: successHTML,
+                onSubmit: function () {
+                    const btn = form.querySelector('button[type="submit"]');
+                    if (btn) btn.disabled = true;
+                },
+                onResponse: function (error) {
+                    if (error) {
+                        console.error('[Pageclip]', error);
+                        const btn = form.querySelector('button[type="submit"]');
+                        if (btn) btn.disabled = false;
+                        alert('Не удалось отправить. Попробуйте ещё раз или напишите нам в Telegram.');
+                    }
+                }
             });
-            
-            // Опционально: обработка ошибок
-            form.addEventListener('pageclip:error', function() {
-                alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
-            });
+            console.log('[Pageclip] RSVP-форма инициализирована');
+        } catch (e) {
+            console.error('[Pageclip] Ошибка инициализации:', e);
         }
     })();
 
