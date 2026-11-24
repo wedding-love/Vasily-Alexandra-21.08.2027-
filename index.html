@@ -50,7 +50,7 @@
     .reveal--delay-3 { transition-delay: 0.3s; }
     .reveal--delay-4 { transition-delay: 0.4s; }
 
-    /* ПАЗЛ (стили остались прежними) */
+    /* ПАЗЛ */
     #puzzle-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cream); transition: opacity 1s ease; z-index: 100; padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
     #puzzle-screen.hidden { opacity: 0; pointer-events: none; }
     .puzzle-title { font-family: 'Manrope', sans-serif; font-size: clamp(18px, 4.8vw, 24px); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; color: var(--brown); text-align: center; width: 100%; }
@@ -223,10 +223,6 @@
     .rsvp__submit:active { transform: scale(0.99); }
     .rsvp__submit:disabled { opacity: 0.6; cursor: default; }
     .rsvp__submit span { position: relative; z-index: 1; }
-    
-    .rsvp__success { display: none; text-align: center; padding: clamp(32px, 6vw, 60px) 20px; }
-    .rsvp__success-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 48px); font-weight: 400; font-style: italic; color: #ffffff; margin-bottom: 16px; }
-    .rsvp__success-text { font-family: 'Manrope', sans-serif; font-size: clamp(13px, 1.7vw, 15px); font-weight: 300; line-height: 1.8; color: rgba(255, 255, 255, 0.82); max-width: 400px; margin: 0 auto; }
 
     /* КОНТАКТЫ */
     .contacts { background: var(--cream); padding: clamp(56px, 10vw, 130px) max(clamp(16px, 4vw, 48px), env(safe-area-inset-right)) max(clamp(56px, 10vw, 130px), env(safe-area-inset-bottom)) max(clamp(16px, 4vw, 48px), env(safe-area-inset-left)); text-align: center; }
@@ -239,6 +235,54 @@
     .contacts__role { font-family: 'Manrope', sans-serif; font-size: clamp(8px, 1.15vw, 10px); font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--brown-soft); margin-bottom: 4px; }
     .contacts__phone { font-family: 'Manrope', sans-serif; font-size: clamp(10px, 1.6vw, 17px); font-weight: 300; color: var(--brown-mid); text-decoration: none; transition: color 0.3s ease; white-space: nowrap; }
     .contacts__phone:hover { color: var(--brown); }
+
+    /* POPUP STYLES */
+    .rsvp-popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(92, 61, 46, 0.6); /* Olive-brown tint */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+        padding: 20px;
+    }
+    .rsvp-popup-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    .rsvp-popup-content {
+        background: #ffffff;
+        padding: clamp(30px, 5vw, 50px);
+        border-radius: 8px;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        transform: scale(0.9);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .rsvp-popup-overlay.active .rsvp-popup-content {
+        transform: scale(1);
+    }
+    .rsvp-popup-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(24px, 5vw, 32px);
+        font-style: italic;
+        color: var(--brown);
+        margin-bottom: 16px;
+    }
+    .rsvp-popup-text {
+        font-family: 'Manrope', sans-serif;
+        font-size: 16px;
+        color: var(--brown-mid);
+        line-height: 1.6;
+    }
 
     /* АДАПТИВ */
     @media (max-width: 700px) { .dresscode__cards, .gifts__cards { grid-template-columns: 1fr; } .dresscode__card, .gifts__card { text-align: center; } }
@@ -431,11 +475,6 @@
 
                 <button type="submit" class="rsvp__submit pageclip-form__submit"><span>Отправить ответ</span></button>
             </form>
-
-            <div class="rsvp__success" id="rsvp-success">
-                <div class="rsvp__success-title">Спасибо!</div>
-                <div class="rsvp__success-text">Ваш ответ принят, мы очень ждем вас.</div>
-            </div>
         </div>
     </section>
 
@@ -451,6 +490,14 @@
         </div>
     </section>
 
+    <!-- POPUP MESSAGE -->
+    <div id="rsvp-popup" class="rsvp-popup-overlay">
+        <div class="rsvp-popup-content">
+            <h3 class="rsvp-popup-title">Спасибо!</h3>
+            <p class="rsvp-popup-text">Ваш ответ принят, спасибо! Ждем вас.</p>
+        </div>
+    </div>
+
 <!-- STEP 1: Pageclip Script -->
 <script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
 
@@ -459,7 +506,7 @@
     'use strict';
 
     /* ============================================================
-       ПАЗЛ (логика осталась прежней)
+       ПАЗЛ
     ============================================================ */
     const PUZZLE_SESSION_KEY = 'wedding-puzzle-solved';
     const IMAGE_SRC      = '2026-11-14 14.11.37.jpg';
@@ -730,23 +777,25 @@
     })();
 
     /* ============================================================
-       RSVP Success Handling (Pageclip Events)
+       RSVP Success Handling (Popup)
     ============================================================ */
     (function initRsvpSuccess() {
         const form = document.getElementById('rsvp-form');
-        const successDiv = document.getElementById('rsvp-success');
+        const popup = document.getElementById('rsvp-popup');
         
-        if (form && successDiv) {
-            // Слушаем специальное событие успеха от Pageclip
+        if (form && popup) {
+            // Слушаем событие успеха от Pageclip
             form.addEventListener('pageclip:success', function() {
-                form.style.display = 'none';
-                successDiv.style.display = 'block';
-                successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                popup.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Блокируем скролл фона
             });
             
-            // Слушаем событие ошибки
-            form.addEventListener('pageclip:error', function() {
-                alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
+            // Опционально: закрыть попап при клике на фон (если нужно)
+            popup.addEventListener('click', function(e) {
+                if (e.target === popup) {
+                    popup.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             });
         }
     })();
