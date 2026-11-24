@@ -7,9 +7,13 @@
 <meta name="format-detection" content="telephone=no">
 <title>Василий и Александра — 21.08.2027</title>
 
+<!-- Подключение шрифтов -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<!-- STEP 2: Pageclip Stylesheet -->
+<link rel="stylesheet" href="https://s.pageclip.co/v1/pageclip.css" media="screen">
 
 <style>
     :root {
@@ -920,19 +924,13 @@
         margin: 0 auto clamp(32px, 7vw, 72px);
         letter-spacing: 0.01em;
     }
-    .rsvp__field { margin-bottom: clamp(24px, 5vw, 44px); text-align: left; }
-    .rsvp__label {
-        display: block;
-        font-family: 'Manrope', sans-serif;
-        font-size: clamp(9px, 1.3vw, 11px);
-        font-weight: 500;
-        letter-spacing: 0.35em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 14px;
+    
+    /* Стили для формы Pageclip внутри RSVP */
+    .pageclip-form {
+        text-align: left;
     }
-    .rsvp__input,
-    .rsvp__textarea {
+    .pageclip-form input, 
+    .pageclip-form textarea {
         width: 100%;
         background: transparent;
         border: none;
@@ -948,13 +946,24 @@
         -webkit-appearance: none;
         appearance: none;
         border-radius: 0;
+        margin-bottom: 24px;
     }
-    .rsvp__input::placeholder,
-    .rsvp__textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
-    .rsvp__input:focus,
-    .rsvp__textarea:focus { border-bottom-color: #ffffff; }
-    .rsvp__textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
-    .rsvp__options { display: flex; flex-direction: column; gap: 12px; }
+    .pageclip-form input::placeholder,
+    .pageclip-form textarea::placeholder { 
+        color: rgba(255, 255, 255, 0.4); 
+    }
+    .pageclip-form input:focus,
+    .pageclip-form textarea:focus { 
+        border-bottom-color: #ffffff; 
+    }
+    .pageclip-form textarea { 
+        resize: vertical; 
+        min-height: 60px; 
+        line-height: 1.5; 
+    }
+    
+    /* Кастомные радио/чекбоксы для Pageclip */
+    .rsvp__options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
     .rsvp__option {
         display: flex;
         align-items: center;
@@ -998,6 +1007,7 @@
     .rsvp__option input:checked ~ .rsvp__mark { border-color: #ffffff; }
     .rsvp__option input:checked ~ .rsvp__mark::after { transform: scale(1); }
     .rsvp__option input:checked ~ .rsvp__option-text { color: #ffffff; font-weight: 500; }
+
     .rsvp__submit {
         display: block;
         width: 100%;
@@ -1032,6 +1042,7 @@
     .rsvp__submit:active { transform: scale(0.99); }
     .rsvp__submit:disabled { opacity: 0.6; cursor: default; }
     .rsvp__submit span { position: relative; z-index: 1; }
+    
     .rsvp__error {
         display: none;
         margin-top: 20px;
@@ -1489,14 +1500,13 @@
                 Пожалуйста, ответьте до 25 июля 2027 года —
                 так мы сможем позаботиться о каждом госте.
             </p>
-            <form id="rsvp-form" class="reveal reveal--delay-2"
-                  action="https://formspree.io/f/xoedvezy" method="POST" novalidate>
-                <input type="hidden" name="_subject" value="Свадьба Василия и Александры — новый ответ">
-
+            
+            <!-- STEP 3: Pageclip Form -->
+            <form action="https://send.pageclip.co/4YWqIzkbioNeI9D9uxz8BO6UG1GPJa9e/Answers" class="pageclip-form reveal reveal--delay-2" method="post">
+                
                 <div class="rsvp__field">
                     <label class="rsvp__label" for="rsvp-name">Имя и фамилия</label>
-                    <input type="text" id="rsvp-name" name="name" class="rsvp__input"
-                           placeholder="Например, Иван Петров" autocomplete="name" required>
+                    <input type="text" id="rsvp-name" name="name" placeholder="Например, Иван Петров" required>
                 </div>
 
                 <div class="rsvp__field">
@@ -1547,21 +1557,18 @@
 
                 <div class="rsvp__field">
                     <label class="rsvp__label" for="rsvp-comment">Комментарий (по желанию)</label>
-                    <textarea id="rsvp-comment" name="comment" class="rsvp__textarea"
-                              placeholder="Аллергии, пожелания, особенности"></textarea>
+                    <textarea id="rsvp-comment" name="comment" placeholder="Аллергии, пожелания, особенности"></textarea>
                 </div>
 
-                <button type="submit" class="rsvp__submit"><span>Отправить ответ</span></button>
-
-                <div class="rsvp__error" id="rsvp-error">
-                    Не удалось отправить ответ. Пожалуйста, попробуйте ещё раз
-                    или позвоните Кристине: +7 981 799-09-26.
-                </div>
+                <!-- This button will have a loading spinner. Keep the inner span for best results. -->
+                <button type="submit" class="rsvp__submit pageclip-form__submit">
+                    <span>Отправить ответ</span>
+                </button>
             </form>
 
             <div class="rsvp__success" id="rsvp-success">
                 <div class="rsvp__success-title">Спасибо!</div>
-                <div class="rsvp__success-text">Мы получили ваш ответ и очень ждём встречи.</div>
+                <div class="rsvp__success-text">Ваш ответ принят, мы очень ждем вас.</div>
             </div>
         </div>
     </section>
@@ -1589,6 +1596,9 @@
             </div>
         </div>
     </section>
+
+<!-- STEP 1: Pageclip Script -->
+<script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
 
 <script>
 (function () {
@@ -2135,37 +2145,55 @@
     })();
 
     /* ============================================================
-       RSVP
+       RSVP Success Handling (Pageclip AJAX)
     ============================================================ */
-    (function initRsvp() {
-        const form = document.getElementById('rsvp-form');
-        const err  = document.getElementById('rsvp-error');
-        const ok   = document.getElementById('rsvp-success');
-        if (!form) return;
+    (function initRsvpSuccess() {
+        const form = document.querySelector('.pageclip-form');
+        const successDiv = document.getElementById('rsvp-success');
+        
+        if (form && successDiv) {
+            // Перехватываем событие отправки формы
+            form.addEventListener('submit', function(e) {
+                // Предотвращаем стандартную отправку, чтобы остаться на странице
+                e.preventDefault();
+                
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn ? btn.innerHTML : '';
+                
+                // Показываем индикатор загрузки (если есть спиннер в кнопке)
+                if(btn) btn.disabled = true;
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (err) err.style.display = 'none';
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-
-            const btn = form.querySelector('.rsvp__submit');
-            if (btn) btn.disabled = true;
-
-            try {
-                const resp = await fetch(form.action, {
+                // Отправляем данные через fetch
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
                     method: 'POST',
-                    body: new FormData(form),
-                    headers: { 'Accept': 'application/json' }
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Успех: скрываем форму, показываем сообщение
+                        form.style.display = 'none';
+                        successDiv.style.display = 'block';
+                        
+                        // Прокрутка к сообщению
+                        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
+                    if(btn) btn.disabled = false;
                 });
-                if (!resp.ok) throw new Error('bad');
-                form.style.display = 'none';
-                if (ok) ok.style.display = 'block';
-            } catch (e2) {
-                if (err) err.style.display = 'block';
-                if (btn) btn.disabled = false;
-            }
-        });
+            });
+        }
     })();
+
 })();
 </script>
 </body>
